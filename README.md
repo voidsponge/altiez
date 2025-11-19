@@ -42,7 +42,10 @@ Automation bot for Altissia language exercises using Python and Playwright.
 
 ```bash
 # Install Python dependencies
-pip install -r requirements.txt
+pip install .
+
+# Install development dependencies (optional)
+pip install .[dev]
 
 # Install Playwright browsers
 playwright install chromium
@@ -150,7 +153,7 @@ altissia-bot/
 ├── scripts/               # Utility scripts
 │   └── install.sh         # Automated installation
 ├── run.py                 # Convenience launcher
-├── requirements.txt       # Python dependencies
+├── pyproject.toml         # Project config & dependencies
 ├── .env.example          # Environment template
 ├── .gitignore            # Git ignore rules
 ├── LICENSE               # Apache 2.0 License
@@ -169,11 +172,12 @@ git clone https://github.com/yourusername/altissia-bot.git
 cd altissia-bot
 
 # Install dependencies
-pip install -r requirements.txt
-playwright install chromium
+pip install .
 
 # Install development tools
-pip install black flake8 mypy
+pip install .[dev]
+
+playwright install chromium
 ```
 
 ### Code Style

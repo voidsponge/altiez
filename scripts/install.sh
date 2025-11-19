@@ -28,7 +28,7 @@ echo ""
 
 # Installation des dépendances Python
 echo "📦 Installation des dépendances Python..."
-pip3 install -r requirements.txt || pip install -r requirements.txt
+pip install .
 
 if [ $? -ne 0 ]; then
     echo "❌ Erreur lors de l'installation des dépendances"
