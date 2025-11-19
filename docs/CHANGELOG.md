@@ -19,10 +19,14 @@ All notable changes to this project will be documented in this file.
 - Update changelog [skip ci]
 - Update changelog [skip ci]
 - Update changelog [skip ci]
+- Update changelog [skip ci]
+- Moved docs files on doc folder
 
 ### Miscellaneous Tasks
 
 - Init project
+- Improved project tree
+- Improved project tree
 
 ### Ci
 
