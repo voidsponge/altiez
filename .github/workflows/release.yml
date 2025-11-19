@@ -9,9 +9,36 @@ permissions:
   contents: write
 
 jobs:
+  # Vérifie d'abord que le commit est bien formaté
+  validate-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install commitlint
+        run: |
+          npm install -g @commitlint/cli @commitlint/config-conventional
+
+      - name: Create commitlint config
+        run: |
+          echo "module.exports = {extends: ['@commitlint/config-conventional']}" > commitlint.config.js
+
+      - name: Validate last commit
+        run: |
+          echo "=== Validating commit message ==="
+          echo "${{ github.event.head_commit.message }}" | npx commitlint
+
+  # Génère le changelog seulement si le commit est valide
   changelog:
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: validate-commit
     steps:
       - uses: actions/checkout@v4
         with:

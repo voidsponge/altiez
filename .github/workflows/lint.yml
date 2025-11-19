@@ -26,7 +26,19 @@ jobs:
 
     - name: Check code formatting with Black
       run: |
-        black --check --verbose --diff altissia_bot/ run.py
+        echo "=== Checking code formatting with Black ==="
+        black --check --verbose --diff --color altissia_bot/ run.py || {
+          echo ""
+          echo "❌ Black formatting issues found!"
+          echo "💡 To fix, run locally: black altissia_bot/ run.py"
+          echo ""
+          echo "=== Files that need formatting ==="
+          black --check altissia_bot/ run.py 2>&1 | grep "would reformat"
+          echo ""
+          echo "=== Detailed diff ==="
+          black --diff --color altissia_bot/ run.py
+          exit 1
+        }
 
     - name: Lint with flake8
       run: |
