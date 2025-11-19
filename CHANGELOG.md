@@ -10,9 +10,11 @@ All notable changes to this project will be documented in this file.
 - Reformat with black and fix ci
 - Lint
 - Flake lint
+- Mypy lint
 
 ### Documentation
 
+- Update changelog [skip ci]
 - Update changelog [skip ci]
 - Update changelog [skip ci]
 - Update changelog [skip ci]
