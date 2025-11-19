@@ -1,6 +1,7 @@
 """
 Module d'automatisation pour les exercices Altissia
 """
+
 import time
 from playwright.sync_api import Page, TimeoutError as PlaywrightTimeout
 from .utils import (

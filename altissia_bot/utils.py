@@ -1,6 +1,7 @@
 """
 Utilitaires et helpers pour le bot Altissia
 """
+
 import os
 from dotenv import load_dotenv
 from playwright.sync_api import Page, TimeoutError as PlaywrightTimeout
