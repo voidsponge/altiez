@@ -1,72 +1,310 @@
-# 🤖 Bot Altissia - Automatisation d'exercices
+# 🤖 Altissia Bot
 
-Bot Python + Playwright pour automatiser les exercices Altissia de type "Type the right answer".
+[![Python](https://img.shields.io/badge/python-3.7+-blue.svg)](https://www.python.org/downloads/)
+[![Playwright](https://img.shields.io/badge/playwright-1.40+-green.svg)](https://playwright.dev/python/)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-## 📦 Installation
+Automation bot for Altissia language exercises using Python and Playwright.
+
+> ⚠️ **Educational purposes only** - Use responsibly and in accordance with Altissia's terms of service.
+
+## ✨ Features
+
+- 🔐 **Automatic login** with anti-bot detection bypass
+- 📝 **Two-phase resolution**:
+  - Phase 1: Collect all answers by going through the exercise
+  - Phase 2: Return to start and auto-fill everything
+- 🎯 **Supports multiple answer types**:
+  - Single blank questions
+  - Multiple blanks per question
+- 🌐 **Headless mode** for background operation
+- 💾 **Answer storage** for quick replay
+
+---
+
+## 📦 Quick Start
+
+### Prerequisites
+
+- Python 3.7+
+- pip
+
+### Installation
+
+**Option 1: Automated script**
 
 ```bash
-# 1. Installer les dépendances Python
-pip install -r requirements.txt
-
-# 2. Installer les navigateurs Playwright
-playwright install chromium
-
-# 3. Configurer vos identifiants
-cp .env.example .env
-# Puis éditer .env avec vos identifiants Altissia
+./install.sh
 ```
 
-## ⚙️ Configuration
+**Option 2: Manual installation**
 
-Créez un fichier `.env` à la racine du projet avec vos identifiants :
+```bash
+# Install Python dependencies
+pip install -r requirements.txt
+
+# Install Playwright browsers
+playwright install chromium
+```
+
+### Configuration
+
+1. Copy the example environment file:
+
+```bash
+cp .env.example .env
+```
+
+2. Edit `.env` with your Altissia credentials:
 
 ```env
-ALTISSIA_USERNAME=votre_email@example.com
-ALTISSIA_PASSWORD=votre_mot_de_passe
+ALTISSIA_USERNAME=your_email@example.com
+ALTISSIA_PASSWORD=your_password
 ALTISSIA_URL=https://www.altissia.com/
 ```
 
-## 🚀 Utilisation
+### Usage
+
+**Interactive mode** (recommended for first use):
 
 ```bash
 python main.py
 ```
 
-Le bot va :
-1. Se connecter à Altissia
-2. Afficher la liste des exercices disponibles
-3. Vous permettre de choisir un exercice
-4. Résoudre automatiquement toutes les questions
+**Headless mode** (invisible browser):
 
-## 🧩 Fonctionnement
-
-Pour chaque question de type "fill in the blank" :
-1. Clique sur "Valider" sans répondre → révèle la bonne réponse
-2. Récupère la solution affichée
-3. Remplit le champ avec la réponse
-4. Valide la réponse
-5. Clique sur "Continuer"
-6. Passe à la question suivante
-
-## 📁 Structure du projet
-
-```
-bot/
-├── main.py              # Script principal
-├── automations.py       # Fonctions d'automatisation
-├── utils.py            # Utilitaires et helpers
-├── requirements.txt    # Dépendances Python
-├── .env               # Configuration (à créer)
-└── README.md          # Ce fichier
+```bash
+python main.py --headless
 ```
 
-## 🛠️ Sélecteurs HTML utilisés
+**Automatic mode**:
 
-- **Champ de réponse** : `input.c-iJOJc`
-- **Bouton Valider** : `button:has-text("Valider")`
-- **Réponse correcte** : `span.c-gUxMKR-bkfbUO-isCorrect-true`
-- **Bouton Continuer** : `button.c-jUtMbh:has-text("Continuer")`
+```bash
+python main.py --auto --exercise 1
+```
 
-## ⚠️ Note
+---
 
-Ce bot est conçu à des fins éducatives. Utilisez-le de manière responsable.
+## 🎯 How It Works
+
+The bot uses a **two-phase approach** to solve exercises:
+
+### Phase 1: Answer Collection 📝
+
+1. Navigate through all questions
+2. Click "Validate" without answering → reveals correct answer
+3. Store the answer(s)
+4. Click "Continue" to next question
+5. Repeat until end
+
+### Phase 2: Automatic Filling ⚡
+
+1. You manually return to the start (click "Restart")
+2. Bot fills all fields with stored answers
+3. Validates each question
+4. Completes the exercise automatically
+
+### Example Output
+
+```
+✅ 10 questions collected!
+
+📋 COLLECTED ANSWERS:
+  Question 1 : House of Commons
+  Question 2 : freedom / expression (2 blanks)
+  Question 3 : Parliament
+  ...
+
+🔄 PHASE 2: Automatic filling
+ℹ️  Return MANUALLY to the start of the exercise
+```
+
+---
+
+## 🏗️ Project Structure
+
+```
+altissia-bot/
+├── .github/
+│   └── workflows/          # CI/CD workflows
+│       ├── lint.yml        # Python linting
+│       ├── commitlint.yml  # Commit message validation
+│       └── release.yml     # Automated changelog
+├── main.py                 # Entry point
+├── automations.py          # Core automation logic
+├── utils.py               # Helper functions
+├── requirements.txt       # Python dependencies
+├── .env.example          # Environment template
+├── .gitignore            # Git ignore rules
+├── LICENSE               # MIT License
+├── README.md             # This file
+├── CONTRIBUTING.md       # Contribution guidelines
+└── CONTRIBUTORS.md       # Project contributors
+```
+
+---
+
+## 🛠️ Development
+
+### Setup Development Environment
+
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/altissia-bot.git
+cd altissia-bot
+
+# Install dependencies
+pip install -r requirements.txt
+playwright install chromium
+
+# Install development tools (optional)
+pip install black flake8 mypy
+```
+
+### Code Style
+
+We use [Black](https://github.com/psf/black) for code formatting:
+
+```bash
+# Format code
+black *.py
+
+# Check formatting
+black --check *.py
+```
+
+Linting with flake8:
+
+```bash
+flake8 *.py --max-line-length=100
+```
+
+### HTML Selectors Reference
+
+If Altissia updates their HTML structure, update these selectors in `automations.py`:
+
+```python
+SELECTORS = {
+    'input_field': 'input.c-iJOJc',
+    'validate_button': 'button:has-text("Valider")',
+    'correct_answer': 'span.c-gUxMKR-bkfbUO-isCorrect-true',
+    'continue_button': 'button.c-jUtMbh, button.c-lfgsZH:has-text("Continuer")',
+}
+```
+
+To find new selectors:
+1. Open Altissia in a browser
+2. Right-click on the element → Inspect
+3. Note the `class`, `id`, or other attributes
+4. Update the selector in the code
+
+### Testing
+
+**Manual testing:**
+
+```bash
+# Run in non-headless mode to see what's happening
+python main.py
+```
+
+**Debug mode:**
+
+Add to `main.py` for detailed logs:
+
+```python
+import logging
+logging.basicConfig(level=logging.DEBUG)
+```
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) for:
+
+- Code of conduct
+- Development workflow
+- Commit message conventions
+- Pull request process
+
+### Commit Convention
+
+We use [Conventional Commits](https://www.conventionalcommits.org/):
+
+```
+feat: add support for multiple choice questions
+fix: resolve login issue with special characters
+docs: update README with new features
+refactor: simplify answer collection logic
+```
+
+---
+
+## 📝 Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for a detailed history of changes.
+
+---
+
+## 🐛 Troubleshooting
+
+### Login fails with "incorrect password"
+
+**Cause**: Anti-bot detection  
+**Solution**: The bot includes anti-detection measures. If it still fails:
+- Verify credentials in `.env`
+- Check if you use SSO/ENT (not supported)
+- Try running in non-headless mode first
+
+### No exercises found
+
+**Cause**: Wrong page or HTML structure changed  
+**Solution**:
+- Navigate manually to the exercise page
+- Press Enter when you see the questions
+- Update selectors if Altissia changed their HTML
+
+### "Timeout: element not found"
+
+**Cause**: Slow connection or selectors outdated  
+**Solution**:
+- Increase timeouts in `automations.py`
+- Check if Altissia updated their HTML structure
+- Inspect the page to find new selectors
+
+---
+
+## 📄 License
+
+This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 👥 Contributors
+
+See [CONTRIBUTORS.md](CONTRIBUTORS.md) for the list of contributors.
+
+---
+
+## ⚖️ Disclaimer
+
+This bot is provided for **educational purposes only**. Users are responsible for:
+
+- Complying with Altissia's terms of service
+- Using the tool ethically and responsibly
+- Any consequences of automated access
+
+The authors assume no liability for misuse of this software.
+
+---
+
+## 🔗 Links
+
+- [Playwright Documentation](https://playwright.dev/python/)
+- [Python-dotenv](https://github.com/theskumar/python-dotenv)
+- [Conventional Commits](https://www.conventionalcommits.org/)
+
+---
+
+**Made with ❤️ for language learners**
