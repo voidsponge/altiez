@@ -5,6 +5,7 @@ Script principal pour lancer et gérer les exercices
 """
 import sys
 import time
+from typing import Optional
 from playwright.sync_api import sync_playwright
 from .utils import load_config, print_header, print_success, print_error, print_info
 from .automations import (
@@ -59,7 +60,7 @@ def display_menu(exercises: list) -> int:
             return 0
 
 
-def run_bot_interactive(headless: bool = False, unit_url: str = None):
+def run_bot_interactive(headless: bool = False, unit_url: Optional[str] = None):
     """
     Lance le bot en mode interactif
 
@@ -195,7 +196,7 @@ def run_bot_interactive(headless: bool = False, unit_url: str = None):
             browser.close()
 
 
-def run_bot_auto(exercise_number: int = 1, headless: bool = True, unit_url: str = None):
+def run_bot_auto(exercise_number: int = 1, headless: bool = True, unit_url: Optional[str] = None):
     """
     Lance le bot en mode automatique (sans interaction)
 

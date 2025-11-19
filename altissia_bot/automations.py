@@ -3,13 +3,13 @@ Module d'automatisation pour les exercices Altissia
 """
 
 import time
+from typing import Optional
 from playwright.sync_api import Page, TimeoutError as PlaywrightTimeout
 from .utils import (
     wait_and_click,
     print_success,
     print_error,
     print_info,
-    print_progress,
 )
 
 
@@ -300,7 +300,7 @@ def solve_exercise(page: Page, max_questions: int = 100) -> int:
         answer = collect_answer(page, question_num)
         if answer:
             answers.append(answer)
-            print_progress(len(answers), "?", "réponses collectées")
+            print_info(f"✓ {len(answers)} réponses collectées")
         else:
             print_error(f"Échec collecte question {question_num}")
             break
@@ -358,7 +358,7 @@ def solve_exercise(page: Page, max_questions: int = 100) -> int:
     return questions_filled
 
 
-def navigate_to_unit(page: Page, unit_url: str = None) -> bool:
+def navigate_to_unit(page: Page, unit_url: Optional[str] = None) -> bool:
     """
     Navigue vers une unité spécifique
 

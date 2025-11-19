@@ -49,5 +49,5 @@ jobs:
 
     - name: Type check with mypy
       run: |
-        mypy altissia_bot/ run.py --ignore-missing-imports --no-strict-optional || true
+        mypy altissia_bot/ run.py --ignore-missing-imports
 
