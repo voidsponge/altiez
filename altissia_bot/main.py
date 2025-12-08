@@ -4,9 +4,16 @@ Bot Altissia - Version optimisée
 Workflow automatique pour résoudre les exercices
 """
 import time
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeout
 from .utils import load_config, print_header, print_success, print_error, print_info
-from .automations import login, detect_exercise_type, collect_all_answers, fill_all_answers, check_retry_button
+from .automations import (
+    login,
+    detect_exercise_type,
+    collect_all_answers,
+    fill_all_answers,
+    check_retry_button,
+)
+
 
 def run_bot(headless=False):
     """Lance le bot avec le workflow optimisé"""
@@ -23,35 +30,37 @@ def run_bot(headless=False):
         browser = p.chromium.launch(
             headless=headless,
             args=[
-                '--disable-blink-features=AutomationControlled',
-                '--no-sandbox',
-                '--disable-web-security'
-            ]
+                "--disable-blink-features=AutomationControlled",
+                "--no-sandbox",
+                "--disable-web-security",
+            ],
         )
 
         context = browser.new_context(
-            viewport={'width': 1280, 'height': 720},
-            user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-            locale='fr-FR',
-            timezone_id='Europe/Paris'
+            viewport={"width": 1280, "height": 720},
+            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+            locale="fr-FR",
+            timezone_id="Europe/Paris",
         )
 
         page = context.new_page()
-        page.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
+        page.add_init_script(
+            "Object.defineProperty(navigator, 'webdriver', {get: () => undefined})"
+        )
 
         try:
             # Connexion
             print_info(f"Accès à {config['url']}...")
-            page.goto(config['url'], timeout=60000)
+            page.goto(config["url"], timeout=60000)
             time.sleep(2)
 
             # Login si nécessaire
             try:
                 page.wait_for_selector('input[type="email"]', timeout=3000)
-                if not login(page, config['username'], config['password']):
+                if not login(page, config["username"], config["password"]):
                     print_error("Échec de connexion")
                     return
-            except:
+            except PlaywrightTimeout:
                 print_info("Déjà connecté")
 
             # Instructions utilisateur
@@ -95,11 +104,13 @@ def run_bot(headless=False):
 
                     # ÉTAPE 9-11: Remplissage avec les réponses collectées
                     filled = fill_all_answers(page, answers_db)
-                    print_success(f"Exercice terminé! {filled}/{len(answers_db)} questions remplies")
+                    print_success(
+                        f"Exercice terminé! {filled}/{len(answers_db)} questions remplies"
+                    )
 
                     # Demander si on continue
                     choice = input("\nFaire un autre exercice? (o/n): ").lower()
-                    if choice != 'o':
+                    if choice != "o":
                         break
 
                     print_info("Naviguez vers le prochain exercice...")
@@ -114,21 +125,25 @@ def run_bot(headless=False):
         except Exception as e:
             print_error(f"Erreur: {e}")
             import traceback
+
             traceback.print_exc()
         finally:
             browser.close()
 
+
 def main():
     """Point d'entrée"""
     import argparse
+
     parser = argparse.ArgumentParser(description="Bot Altissia - Automatisation")
-    parser.add_argument('--headless', action='store_true', help='Mode headless')
+    parser.add_argument("--headless", action="store_true", help="Mode headless")
     args = parser.parse_args()
 
     try:
         run_bot(headless=args.headless)
     except KeyboardInterrupt:
         print("\nProgramme interrompu")
+
 
 if __name__ == "__main__":
     main()

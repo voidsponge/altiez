@@ -2,31 +2,50 @@
 Module d automatisation - VERSION BLACKLIST FIXED
 Vérifie les MOTS ENTIERS dans la blacklist (pas sous-chaînes)
 """
+
 import time
 import re
-from playwright.sync_api import Page, TimeoutError as PlaywrightTimeout
+from playwright.sync_api import TimeoutError as PlaywrightTimeout
 from .utils import wait_and_click, print_success, print_error, print_info
 
 SELECTORS = {
-    "input_field": "input.c-iJOJc, input[type=\"text\"]",
-    "validate_button": "button:has-text(\"Valider\")",
+    "input_field": 'input.c-iJOJc, input[type="text"]',
+    "validate_button": 'button:has-text("Valider")',
     "correct_answer": "span.c-gUxMKR-bkfbUO-isCorrect-true",
-    "continue_button": "button.c-jUtMbh, button.c-lfgsZH:has-text(\"Continuer\")",
-    "retry_button": "button:has-text(\"Réessayer\"), button:has-text(\"Ressayer\")"
+    "continue_button": 'button.c-jUtMbh, button.c-lfgsZH:has-text("Continuer")',
+    "retry_button": 'button:has-text("Réessayer"), button:has-text("Ressayer")',
 }
 
 # Mots à ignorer - attention: vérifiés en MOTS ENTIERS maintenant
 BLACKLIST_WORDS = [
-    "Incorrect", "Correct", "Wrong",
-    "Faux", "Vrai", "Error", "Success",
-    "Valider", "Continuer", "Revenir", "Ressayer", "Réessayer",
-    "Pause", "Play", "Mute", "Skip",
-    "Select the right answer", "Choose", "Click",
+    "Incorrect",
+    "Correct",
+    "Wrong",
+    "Faux",
+    "Vrai",
+    "Error",
+    "Success",
+    "Valider",
+    "Continuer",
+    "Revenir",
+    "Ressayer",
+    "Réessayer",
+    "Pause",
+    "Play",
+    "Mute",
+    "Skip",
+    "Select the right answer",
+    "Choose",
+    "Click",
     "Put the elements in the right order",
     "Sélectionnez le premier élément",
-    "Listen to", "Max is writing", "Accueil", "Toutes les leçons",
-    "Actualités"
+    "Listen to",
+    "Max is writing",
+    "Accueil",
+    "Toutes les leçons",
+    "Actualités",
 ]
+
 
 def normalize_quotes(text):
     if not text:
@@ -39,6 +58,7 @@ def normalize_quotes(text):
     text = text.replace(chr(8217), chr(39))
     return text
 
+
 def clean_text(text):
     if not text:
         return text
@@ -47,6 +67,7 @@ def clean_text(text):
     text = text.strip(chr(34)).strip(chr(39))
     text = text.rstrip(".").rstrip("!").rstrip("?").rstrip(",").rstrip(";").rstrip(":")
     return text.strip()
+
 
 def texts_match(text1, text2):
     if not text1 or not text2:
@@ -58,6 +79,7 @@ def texts_match(text1, text2):
     if clean_text(text1) == clean_text(text2):
         return True
     return False
+
 
 def get_text_variants(text):
     variants = []
@@ -80,6 +102,7 @@ def get_text_variants(text):
         if cleaned_no_quotes:
             variants.append(cleaned_no_quotes)
     return [v for v in dict.fromkeys(variants) if v]
+
 
 def is_blacklisted(text):
     """Vérifie si le texte contient un mot blacklisté (MOT ENTIER uniquement)"""
@@ -104,28 +127,31 @@ def is_blacklisted(text):
 
     return False
 
+
 def login(page, username, password):
     try:
         print_info("Connexion...")
         page.wait_for_load_state("networkidle")
         time.sleep(1)
-        email_field = page.locator("input[type=\"email\"], input[name=\"email\"], input[placeholder*=\"mail\"]").first
+        email_field = page.locator(
+            'input[type="email"], input[name="email"], input[placeholder*="mail"]'
+        ).first
         email_field.wait_for(state="visible", timeout=5000)
         email_field.click()
         time.sleep(0.3)
         email_field.fill(username)
         time.sleep(0.5)
-        password_field = page.locator("input[type=\"password\"]").first
+        password_field = page.locator('input[type="password"]').first
         password_field.wait_for(state="visible", timeout=5000)
         password_field.click()
         time.sleep(0.3)
         password_field.fill(password)
         time.sleep(0.5)
         connect_button_selectors = [
-            "button:has-text(\"Se connecter\")",
-            "button:has-text(\"Connexion\")",
-            "button:has-text(\"Login\")",
-            "button[type=\"submit\"]"
+            'button:has-text("Se connecter")',
+            'button:has-text("Connexion")',
+            'button:has-text("Login")',
+            'button[type="submit"]',
         ]
         clicked = False
         for selector in connect_button_selectors:
@@ -136,7 +162,7 @@ def login(page, username, password):
                 clicked = True
                 print_info(f"Connexion via: {selector}")
                 break
-            except:
+            except PlaywrightTimeout:
                 continue
         if not clicked:
             print_error("Bouton de connexion non trouvé")
@@ -148,9 +174,11 @@ def login(page, username, password):
         print_error(f"Échec connexion: {e}")
         return False
 
+
 def detect_exercise_type(page):
     print_info("Mode: Détection par question")
     return "mixed"
+
 
 def detect_question_type(page):
     try:
@@ -158,23 +186,29 @@ def detect_question_type(page):
         input_count = page.locator(f'{SELECTORS["input_field"]}:visible').count()
         if input_count > 0:
             return "text"
-        true_btn = page.locator("button:has-text(\"true\"):visible, button:has-text(\"True\"):visible").count()
-        false_btn = page.locator("button:has-text(\"false\"):visible, button:has-text(\"False\"):visible").count()
+        true_btn = page.locator(
+            'button:has-text("true"):visible, button:has-text("True"):visible'
+        ).count()
+        false_btn = page.locator(
+            'button:has-text("false"):visible, button:has-text("False"):visible'
+        ).count()
         if true_btn > 0 and false_btn > 0:
             return "truefalse"
         order_indicators = [
             "text=Put the elements in the right order",
             "text=Mettez les éléments dans le bon ordre",
-            "text=Sélectionnez le premier élément"
+            "text=Sélectionnez le premier élément",
         ]
         for indicator in order_indicators:
             try:
                 count = page.locator(indicator).count()
                 if count > 0:
                     return "order"
-            except:
+            except Exception:
                 pass
-        all_clickable = page.locator("button:visible, [role=\"button\"]:visible, div[class*=\"button\"]:visible").all()
+        all_clickable = page.locator(
+            'button:visible, [role="button"]:visible, div[class*="button"]:visible'
+        ).all()
         choice_count = sum(1 for elem in all_clickable if is_valid_choice_element(elem))
         if choice_count >= 2:
             return "choice"
@@ -182,6 +216,7 @@ def detect_question_type(page):
     except Exception as e:
         print_error(f"Erreur détection: {e}")
         return "unknown"
+
 
 def is_valid_choice_element(elem):
     try:
@@ -191,8 +226,9 @@ def is_valid_choice_element(elem):
         if len(text) > 200:
             return False
         return True
-    except:
+    except Exception:
         return False
+
 
 def collect_all_answers(page, exercise_type, max_questions=100):
     print_info("PHASE 1: Collecte des réponses")
@@ -200,12 +236,14 @@ def collect_all_answers(page, exercise_type, max_questions=100):
     for q_num in range(1, max_questions + 1):
         try:
             try:
-                retry_visible = page.locator("button:has-text(\"Réessayer\"), button:has-text(\"Ressayer\")").count()
-                continuer_visible = page.locator("button:has-text(\"Continuer\")").count()
+                retry_visible = page.locator(
+                    'button:has-text("Réessayer"), button:has-text("Ressayer")'
+                ).count()
+                continuer_visible = page.locator('button:has-text("Continuer")').count()
                 if retry_visible > 0 and continuer_visible == 0:
                     print_info("Bouton Réessayer détecté - Fin")
                     break
-            except:
+            except Exception:
                 pass
             question_type = detect_question_type(page)
             if question_type == "unknown":
@@ -233,18 +271,16 @@ def collect_all_answers(page, exercise_type, max_questions=100):
                 correct_answers = find_any_correct_elements(page)
                 correct_answers = filter_blacklist(correct_answers)
                 if not correct_answers:
-                    manual = input(f"Entrez manuellement (ou skip): ").strip()
+                    manual = input("Entrez manuellement (ou skip): ").strip()
                     if manual.lower() == "skip":
                         break
                     elif manual:
                         correct_answers = [manual]
                     else:
                         break
-            answers_db.append({
-                "question_num": q_num,
-                "type": question_type,
-                "answers": correct_answers
-            })
+            answers_db.append(
+                {"question_num": q_num, "type": question_type, "answers": correct_answers}
+            )
             print_success(f"Réponse: {correct_answers}")
             if not wait_and_click(page, SELECTORS["continue_button"], timeout=3000):
                 print_info("Dernière question")
@@ -255,6 +291,7 @@ def collect_all_answers(page, exercise_type, max_questions=100):
             break
     print_success(f"{len(answers_db)} questions collectées!")
     return answers_db
+
 
 def filter_blacklist(answers):
     """Filtre avec vérification MOT ENTIER"""
@@ -268,6 +305,7 @@ def filter_blacklist(answers):
             print_info(f"  Ignoré (blacklist): {answer}")
     return filtered
 
+
 def find_text_answers(page):
     results = []
     try:
@@ -277,11 +315,12 @@ def find_text_answers(page):
             if text:
                 results.append(text)
                 print_info(f"  Texte correct: {text}")
-    except:
+    except Exception:
         pass
     if not results:
         results = find_green_text_elements(page)
     return results
+
 
 def find_green_text_elements(page):
     results = []
@@ -295,20 +334,21 @@ def find_green_text_elements(page):
                 color = span.evaluate("el => window.getComputedStyle(el).color")
                 classes = span.get_attribute("class") or ""
                 is_green = (
-                    "rgb(34, 197, 94)" in str(color) or
-                    "rgb(22, 163, 74)" in str(color) or
-                    "rgb(0, 128, 0)" in str(color) or
-                    "rgb(26, 179, 92)" in str(color) or
-                    "correct" in classes.lower()
+                    "rgb(34, 197, 94)" in str(color)
+                    or "rgb(22, 163, 74)" in str(color)
+                    or "rgb(0, 128, 0)" in str(color)
+                    or "rgb(26, 179, 92)" in str(color)
+                    or "correct" in classes.lower()
                 )
                 if is_green:
                     results.append(text)
                     print_info(f"  Texte vert: {text}")
-            except:
+            except Exception:
                 continue
-    except:
+    except Exception:
         pass
     return results
+
 
 def find_choice_answers(page):
     results = []
@@ -324,32 +364,41 @@ def find_choice_answers(page):
                     continue
                 if is_blacklisted(text):
                     continue
-                styles = elem.evaluate("""el => {
+                styles = elem.evaluate(
+                    """el => {
                     const s = window.getComputedStyle(el);
                     return {
                         borderColor: s.borderColor,
                         backgroundColor: s.backgroundColor,
                         color: s.color
                     };
-                }""")
+                }"""
+                )
                 classes = elem.get_attribute("class") or ""
                 all_colors = " ".join(str(v) for v in styles.values()).lower()
                 green_patterns = [
                     "rgb(26, 179, 92)",
                     "rgb(233, 251, 241)",
-                    "rgb(34, 197, 94)", "rgb(22, 163, 74)",
-                    "rgb(16, 185, 129)", "rgb(5, 150, 105)",
-                    "rgb(0, 128, 0)", "rgb(0, 255, 0)",
-                    "rgb(76, 175, 80)", "rgb(46, 125, 50)",
-                    "rgb(67, 160, 71)", "rgb(102, 187, 106)",
-                    "rgb(139, 195, 74)", "rgb(156, 204, 101)",
-                    "rgb(200, 230, 201)", "rgb(165, 214, 167)",
+                    "rgb(34, 197, 94)",
+                    "rgb(22, 163, 74)",
+                    "rgb(16, 185, 129)",
+                    "rgb(5, 150, 105)",
+                    "rgb(0, 128, 0)",
+                    "rgb(0, 255, 0)",
+                    "rgb(76, 175, 80)",
+                    "rgb(46, 125, 50)",
+                    "rgb(67, 160, 71)",
+                    "rgb(102, 187, 106)",
+                    "rgb(139, 195, 74)",
+                    "rgb(156, 204, 101)",
+                    "rgb(200, 230, 201)",
+                    "rgb(165, 214, 167)",
                 ]
                 is_green = (
-                    any(color in all_colors for color in green_patterns) or
-                    "correct" in classes.lower() or
-                    "success" in classes.lower() or
-                    "iscorrect-true" in classes.lower()
+                    any(color in all_colors for color in green_patterns)
+                    or "correct" in classes.lower()
+                    or "success" in classes.lower()
+                    or "iscorrect-true" in classes.lower()
                 )
                 if is_green:
                     if text not in results:
@@ -361,12 +410,13 @@ def find_choice_answers(page):
                         if not is_duplicate:
                             results.append(text)
                             print_success(f"  ✓ VERT: {text}")
-            except:
+            except Exception:
                 continue
         print_info(f"  Total verts: {len(results)}")
     except Exception as e:
         print_error(f"Erreur find_choice_answers: {e}")
     return results
+
 
 def find_order_answer(page):
     results = []
@@ -382,17 +432,17 @@ def find_order_answer(page):
                 color = elem.evaluate("el => window.getComputedStyle(el).color")
                 classes = elem.get_attribute("class") or ""
                 is_green = (
-                    "rgb(34, 197, 94)" in str(color) or
-                    "rgb(22, 163, 74)" in str(color) or
-                    "rgb(0, 128, 0)" in str(color) or
-                    "rgb(26, 179, 92)" in str(color) or
-                    "correct" in classes.lower()
+                    "rgb(34, 197, 94)" in str(color)
+                    or "rgb(22, 163, 74)" in str(color)
+                    or "rgb(0, 128, 0)" in str(color)
+                    or "rgb(26, 179, 92)" in str(color)
+                    or "correct" in classes.lower()
                 )
                 if is_green and len(text) > 10:
                     green_sentence = text
                     print_info(f"  Phrase verte: {green_sentence}")
                     break
-            except:
+            except Exception:
                 continue
         if green_sentence:
             words = green_sentence.split()
@@ -407,14 +457,11 @@ def find_order_answer(page):
         print_error(f"Erreur find_order_answer: {e}")
     return results
 
+
 def find_any_correct_elements(page):
     results = []
     try:
-        selectors = [
-            "[class*=\"correct\"]",
-            "[class*=\"success\"]",
-            "[class*=\"isCorrect-true\"]"
-        ]
+        selectors = ['[class*="correct"]', '[class*="success"]', '[class*="isCorrect-true"]']
         for selector in selectors:
             try:
                 elements = page.locator(selector).all()[:10]
@@ -422,11 +469,12 @@ def find_any_correct_elements(page):
                     text = elem.inner_text().strip()
                     if text and len(text) < 100 and text not in results:
                         results.append(text)
-            except:
+            except Exception:
                 continue
-    except:
+    except Exception:
         pass
     return results
+
 
 def detect_truefalse_answer(page):
     try:
@@ -437,8 +485,9 @@ def detect_truefalse_answer(page):
         if correct > 0:
             return ["true"]
         return ["true"]
-    except:
+    except Exception:
         return ["true"]
+
 
 def fill_all_answers(page, answers_db):
     print_info("PHASE 2: Remplissage automatique")
@@ -466,9 +515,10 @@ def fill_all_answers(page, answers_db):
             filled_count += 1
             time.sleep(0.5)
         except Exception as e:
-            print_error(f"Erreur Q{qa["question_num"]}: {e}")
+            print_error(f"Erreur Q{qa['question_num']}: {e}")
             break
     return filled_count
+
 
 def fill_text_question(page, answers):
     try:
@@ -492,6 +542,7 @@ def fill_text_question(page, answers):
         print_error(f"Erreur: {e}")
         return False
 
+
 def fill_choice_question(page, answers):
     try:
         clicked = 0
@@ -504,7 +555,7 @@ def fill_choice_question(page, answers):
                 if button_found:
                     break
                 try:
-                    button = page.locator(f"div.c-cFbiKG:has-text(\"{variant}\")").first
+                    button = page.locator(f'div.c-cFbiKG:has-text("{variant}")').first
                     button.wait_for(state="visible", timeout=500)
                     button.click()
                     button_found = True
@@ -512,7 +563,7 @@ def fill_choice_question(page, answers):
                     time.sleep(0.4)
                     print_success(f"  ✓ Cliqué: {variant}")
                     break
-                except:
+                except PlaywrightTimeout:
                     pass
 
             if not button_found:
@@ -520,8 +571,8 @@ def fill_choice_question(page, answers):
                     if button_found:
                         break
                     selectors = [
-                        f"button:has-text(\"{variant}\")",
-                        f"[role=\"button\"]:has-text(\"{variant}\")"
+                        f'button:has-text("{variant}")',
+                        f'[role="button"]:has-text("{variant}")',
                     ]
                     for selector in selectors:
                         try:
@@ -533,7 +584,7 @@ def fill_choice_question(page, answers):
                             time.sleep(0.4)
                             print_success(f"  ✓ Cliqué (fallback): {variant}")
                             break
-                        except:
+                        except PlaywrightTimeout:
                             pass
 
             if not button_found:
@@ -541,7 +592,7 @@ def fill_choice_question(page, answers):
                     if button_found:
                         break
                     try:
-                        elem = page.locator(f"*:visible:has-text(\"{variant}\")").first
+                        elem = page.locator(f'*:visible:has-text("{variant}")').first
                         elem.wait_for(state="visible", timeout=500)
                         elem.click()
                         button_found = True
@@ -549,7 +600,7 @@ def fill_choice_question(page, answers):
                         time.sleep(0.4)
                         print_success(f"  ✓ Cliqué (dernier recours): {variant}")
                         break
-                    except:
+                    except PlaywrightTimeout:
                         pass
 
             if not button_found:
@@ -570,18 +621,19 @@ def fill_choice_question(page, answers):
         print_error(f"Erreur: {e}")
         return False
 
+
 def fill_truefalse_question(page, answers):
     try:
         answer = clean_text(answers[0]).lower()
         if answer not in ["true", "false"]:
             return False
         try:
-            button = page.locator(f"button:has-text(\"{answer}\")").first
+            button = page.locator(f'button:has-text("{answer}")').first
             button.wait_for(state="visible", timeout=1000)
             button.click()
             time.sleep(0.3)
             print_success(f"  {answer.upper()}")
-        except:
+        except PlaywrightTimeout:
             pass
         if not wait_and_click(page, SELECTORS["validate_button"], timeout=3000):
             return False
@@ -593,6 +645,7 @@ def fill_truefalse_question(page, answers):
     except Exception as e:
         print_error(f"Erreur: {e}")
         return False
+
 
 def fill_order_question(page, answers):
     try:
@@ -606,8 +659,8 @@ def fill_order_question(page, answers):
                 if clicked:
                     break
                 selectors = [
-                    f"button:text-is(\"{variant}\")",
-                    f"button:has-text(\"{variant}\")",
+                    f'button:text-is("{variant}")',
+                    f'button:has-text("{variant}")',
                 ]
                 for selector in selectors:
                     try:
@@ -618,7 +671,7 @@ def fill_order_question(page, answers):
                         time.sleep(0.4)
                         print_success(f"  Cliqué: {word}")
                         break
-                    except:
+                    except PlaywrightTimeout:
                         continue
             if not clicked:
                 print_info(f"  Fallback: {word}")
@@ -636,9 +689,9 @@ def fill_order_question(page, answers):
                                     break
                             if clicked:
                                 break
-                        except:
+                        except Exception:
                             continue
-                except:
+                except Exception:
                     pass
             if not clicked:
                 print_error(f"  Non trouvé: {word}")
@@ -655,12 +708,10 @@ def fill_order_question(page, answers):
         print_error(f"Erreur: {e}")
         return False
 
+
 def check_retry_button(page, click=False):
     try:
-        selectors = [
-            "button:has-text(\"Réessayer\")",
-            "button:has-text(\"Ressayer\")"
-        ]
+        selectors = ['button:has-text("Réessayer")', 'button:has-text("Ressayer")']
         for selector in selectors:
             try:
                 retry_btn = page.locator(selector).first
@@ -671,7 +722,7 @@ def check_retry_button(page, click=False):
                     time.sleep(2)
                     print_success("Retour au début")
                 return True
-            except:
+            except PlaywrightTimeout:
                 continue
         return False
     except Exception as e:
