@@ -10,6 +10,12 @@ All notable changes to this project will be documented in this file.
 
 ### 📚 Documentation
 
+- Update changelog [skip ci]
+- Update changelog [skip ci]
+- Update changelog [skip ci]
+- Update changelog [skip ci]
+- Update changelog [skip ci]
+- Update changelog [skip ci]
 - Moved docs files on doc folder
 - Improve doc lint mypy
 
