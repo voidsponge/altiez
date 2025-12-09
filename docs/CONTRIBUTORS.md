@@ -6,16 +6,7 @@ Thank you to everyone who has contributed to this project! 🎉
 
 - **[@Elohyrr](https://github.com/Elohyrr)** - Project creator and maintainer
 
-## Contributors
-
-<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<!-- prettier-ignore-start -->
-<!-- markdownlint-disable -->
-
-<!-- markdownlint-restore -->
-<!-- prettier-ignore-end -->
-
-<!-- ALL-CONTRIBUTORS-LIST:END -->
+### Contributors
 
 ---
 
