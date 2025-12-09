@@ -23,6 +23,8 @@ All notable changes to this project will be documented in this file.
 - Template changelog
 - Cliff repo
 - Merge fix green color unused
+- Merge pull request 
+- Bug
 
 
 ### 📚 Documentation
