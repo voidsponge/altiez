@@ -678,9 +678,3 @@ def check_retry_button(page, click=False):
     except Exception as e:
         print_error(f"Erreur: {e}")
         return False
-
-
-"""
-Module d automatisation - VERSION BLACKLIST FIXED
-Vérifie les MOTS ENTIERS dans la blacklist (pas sous-chaînes)
-"""
