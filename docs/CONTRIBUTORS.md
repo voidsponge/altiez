@@ -8,8 +8,7 @@ Thank you to everyone who has contributed to this project! 🎉
 
 ## Contributors
 
-<!-- This list will be automatically updated by the all-contributors bot -->
-<!-- ALL-CONTRIBUTORS-LIST:START -->
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
 
