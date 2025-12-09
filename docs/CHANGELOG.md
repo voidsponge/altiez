@@ -23,27 +23,13 @@ All notable changes to this project will be documented in this file.
 
 ### 📚 Documentation
 
-- **(README)** Update contributors
-- **(README)** Update contributors
-- Update changelog [skip ci]
-- Update changelog [skip ci]
-- Update changelog [skip ci]
-- Update changelog [skip ci]
-- Update changelog [skip ci]
-- Update changelog [skip ci]
 - Moved docs files on doc folder
-- Update changelog [skip ci]
 - Improve doc lint mypy
-- Update changelog [skip ci]
-- Update changelog [skip ci]
-- Update changelog [skip ci]
-- Update changelog [skip ci]
 
 
 ### ⚙️ Miscellaneous Tasks
 
 - Init project
-- Improved project tree
 - Improved project tree
 
 
