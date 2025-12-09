@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 
 ### 🐛 Bug Fixes
 
+- **(ci)** Prevent race condition between workflows with concurrency group
 - **(cliff)** Skip automated commits before grouping rules
 - Refactor src files & simplify ci
 - Reformat with black and fix ci
@@ -18,11 +19,9 @@ All notable changes to this project will be documented in this file.
 - Mypy lint
 - Format & lint
 - Removed useless quotes
-- Multi choices fixing
-- Lint
 - Template changelog
 - Cliff repo
-- Merge fix green color unused
+- Multi choices handling 
 
 
 ### 📚 Documentation
