@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 ### 🐛 Bug Fixes
 
 - **(ci)** Prevent race condition between workflows with concurrency group
+- **(ci)** Fetch full git history for contributors detection
 - **(cliff)** Skip automated commits before grouping rules
 - Refactor src files & simplify ci
 - Reformat with black and fix ci
