@@ -41,16 +41,6 @@ Thank you to everyone who has contributed to this project! 🎉
 </tr>
 </table>
 
-<!-- This list will be automatically updated by the all-contributors bot -->
-<!-- ALL-CONTRIBUTORS-LIST:START -->
-<!-- prettier-ignore-start -->
-<!-- markdownlint-disable -->
-
-<!-- markdownlint-restore -->
-<!-- prettier-ignore-end -->
-
-<!-- ALL-CONTRIBUTORS-LIST:END -->
-
 ---
 
 ## How to become a contributor
