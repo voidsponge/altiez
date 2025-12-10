@@ -488,11 +488,7 @@ def fill_text_question(page, answers):
 def fill_choice_question(page, answers):
     try:
         clicked = 0
-        selectors = [
-            "div.c-cFbiKG",
-            "button, [role='button']",
-            "*:visible"
-        ]
+        selectors = ["div.c-cFbiKG", "button, [role='button']", "*:visible"]
 
         for answer_text in answers:
             variants = get_text_variants(answer_text)
