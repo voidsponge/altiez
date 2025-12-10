@@ -493,20 +493,40 @@ def fill_choice_question(page, answers):
             print_info(f"  Recherche: {answer_text}")
             button_found = False
 
+            # 1. Tentative correspondance EXACTE (prioritaire)
             for variant in variants:
                 if button_found:
                     break
                 try:
-                    button = page.locator("div.c-cFbiKG").filter(has_text=variant).first
-                    button.wait_for(state="visible", timeout=500)
+                    # Regex pour correspondance exacte (ignoring case and whitespace)
+                    pattern = re.compile(r"^\s*" + re.escape(variant) + r"\s*$", re.IGNORECASE)
+                    button = page.locator("div.c-cFbiKG").filter(has_text=pattern).first
+                    button.wait_for(state="visible", timeout=200)
                     button.click()
                     button_found = True
                     clicked += 1
                     time.sleep(0.4)
-                    print_success(f"  ✓ Cliqué: {variant}")
+                    print_success(f"  ✓ Cliqué (exact): {variant}")
                     break
                 except PlaywrightTimeout:
                     pass
+
+            # 2. Tentative correspondance PARTIELLE (fallback)
+            if not button_found:
+                for variant in variants:
+                    if button_found:
+                        break
+                    try:
+                        button = page.locator("div.c-cFbiKG").filter(has_text=variant).first
+                        button.wait_for(state="visible", timeout=500)
+                        button.click()
+                        button_found = True
+                        clicked += 1
+                        time.sleep(0.4)
+                        print_success(f"  ✓ Cliqué (partiel): {variant}")
+                        break
+                    except PlaywrightTimeout:
+                        pass
 
             if not button_found:
                 for variant in variants:
