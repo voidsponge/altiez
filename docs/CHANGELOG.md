@@ -28,7 +28,6 @@ All notable changes to this project will be documented in this file.
 - Merge pull request 
 - Bug
 - Multi choices handling 
-- Rm shit
 
 
 ### 📚 Documentation
