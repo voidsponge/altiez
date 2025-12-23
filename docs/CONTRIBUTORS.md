@@ -36,7 +36,7 @@ Thank you to everyone who has contributed to this project! 🎉
 
 ---
 
-## How to become a contributor
+## How to become a contributor ??
 
 We welcome contributions from everyone! Check out our [CONTRIBUTING.md](CONTRIBUTING.md) guide to get started.
 
